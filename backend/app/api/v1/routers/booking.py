@@ -86,7 +86,7 @@ def get_bookings(
     limit: int = Query(
         default=10,
         ge=1,
-        le=100,
+        le=200,
     ),
     db: Session = Depends(get_db),
     current_user: User = Depends(

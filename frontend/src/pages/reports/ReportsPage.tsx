@@ -125,6 +125,13 @@ export default function ReportsPage() {
                 startIcon={<DownloadIcon />}
                 disabled={exporting !== null}
                 onClick={() => handleExport('excel')}
+                sx={{
+                backgroundColor: "#ffff",
+                color: "#c33535",
+                "&:hover": {
+                  backgroundColor: "#ffffff",
+                },
+              }} 
               >
                 {exporting === 'excel' ? 'Exporting…' : 'Export Excel'}
               </Button>
@@ -133,6 +140,13 @@ export default function ReportsPage() {
                 startIcon={<DownloadIcon />}
                 disabled={exporting !== null}
                 onClick={() => handleExport('pdf')}
+                sx={{
+                backgroundColor: "#ffff",
+                color: "#c33535",
+                "&:hover": {
+                  backgroundColor: "#ffffff",
+                },
+              }} 
               >
                 {exporting === 'pdf' ? 'Exporting…' : 'Export PDF'}
               </Button>

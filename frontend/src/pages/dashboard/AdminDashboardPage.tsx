@@ -64,7 +64,7 @@ export default function AdminDashboardPage() {
       {
         label: 'Utilization %',
         data: utilization.map((u) => u.utilization_percentage),
-        backgroundColor: '#3454D1',
+        backgroundColor: '#47a6c1',
         borderRadius: 6,
       },
     ],
@@ -77,12 +77,14 @@ export default function AdminDashboardPage() {
         label: 'Bookings using resource',
         data: resourceUsage.map((r) => r.booking_count),
         backgroundColor: [
-          '#3454D1',
-          '#00B4A0',
-          '#E0A22C',
           '#D64545',
-          '#6C7FE0',
+          '#2c3e50',
           '#2E9E5B',
+          '#E0A22C',
+          '#00B4A0',
+          '#3454D1',
+          '#6C7FE0',
+          
         ],
       },
     ],

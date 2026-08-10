@@ -47,7 +47,7 @@ def get_audit_logs(
     limit: int = Query(
         default=10,
         ge=1,
-        le=100,
+        le=200,
     ),
     current_user: User = Depends(
         get_current_admin,

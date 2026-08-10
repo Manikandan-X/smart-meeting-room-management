@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -10,27 +10,32 @@ import {
   FormControlLabel,
   Switch,
   Alert,
-} from '@mui/material'
-import type { MeetingRoom } from '@/types/models'
-import { meetingRoomsApi } from '@/api/meetingRooms'
-import { getApiErrorMessage } from '@/api/client'
+} from "@mui/material";
+import type { MeetingRoom } from "@/types/models";
+import { meetingRoomsApi } from "@/api/meetingRooms";
+import { getApiErrorMessage } from "@/api/client";
 
 interface Props {
-  open: boolean
-  room: MeetingRoom | null
-  onClose: () => void
-  onSaved: () => void
+  open: boolean;
+  room: MeetingRoom | null;
+  onClose: () => void;
+  onSaved: () => void;
 }
 
-export default function RoomFormDialog({ open, room, onClose, onSaved }: Props) {
+export default function RoomFormDialog({
+  open,
+  room,
+  onClose,
+  onSaved,
+}: Props) {
   const [form, setForm] = useState({
-    name: '',
-    capacity: '',
-    facilities: '',
+    name: "",
+    capacity: "",
+    facilities: "",
     is_available: true,
-  })
-  const [error, setError] = useState<string | null>(null)
-  const [saving, setSaving] = useState(false)
+  });
+  const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (room) {
@@ -39,43 +44,49 @@ export default function RoomFormDialog({ open, room, onClose, onSaved }: Props) 
         capacity: String(room.capacity),
         facilities: room.facilities,
         is_available: room.is_available,
-      })
+      });
     } else {
-      setForm({ name: '', capacity: '', facilities: '', is_available: true })
+      setForm({ name: "", capacity: "", facilities: "", is_available: true });
     }
-    setError(null)
-  }, [room, open])
+    setError(null);
+  }, [room, open]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setSaving(true)
-    setError(null)
+    e.preventDefault();
+    setSaving(true);
+    setError(null);
     try {
       const payload = {
         name: form.name,
         capacity: Number(form.capacity),
         facilities: form.facilities,
         is_available: form.is_available,
-      }
+      };
       if (room) {
-        await meetingRoomsApi.update(room.id, payload)
+        await meetingRoomsApi.update(room.id, payload);
       } else {
-        await meetingRoomsApi.create(payload)
+        await meetingRoomsApi.create(payload);
       }
-      onSaved()
+      onSaved();
     } catch (err) {
-      setError(getApiErrorMessage(err, 'Could not save meeting room.'))
+      setError(getApiErrorMessage(err, "Could not save meeting room."));
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
-      <DialogTitle>{room ? 'Edit Meeting Room' : 'New Meeting Room'}</DialogTitle>
+      <DialogTitle>
+        {room ? "Edit Meeting Room" : "New Meeting Room"}
+      </DialogTitle>
       <Stack component="form" onSubmit={handleSubmit}>
         <DialogContent>
-          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
           <Stack spacing={2}>
             <TextField
               label="Room name"
@@ -103,7 +114,37 @@ export default function RoomFormDialog({ open, room, onClose, onSaved }: Props) 
               control={
                 <Switch
                   checked={form.is_available}
-                  onChange={(e) => setForm({ ...form, is_available: e.target.checked })}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      is_available: e.target.checked,
+                    })
+                  }
+                  sx={{
+                    // ON state
+                    "& .MuiSwitch-switchBase.Mui-checked": {
+                      color: "#c33535",
+                    },
+
+                    "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                      backgroundColor: "#c33535",
+                      opacity: 1,
+                    },
+
+                    // OFF state
+                    "& .MuiSwitch-track": {
+                      backgroundColor: "#999999",
+                    },
+
+                    "& .MuiSwitch-thumb": {
+                      backgroundColor: "#ffffff",
+                    },
+
+                    // ON hover
+                    "& .MuiSwitch-switchBase.Mui-checked:hover": {
+                      backgroundColor: "rgba(195, 53, 53, 0.08)",
+                    },
+                  }}
                 />
               }
               label="Available for booking"
@@ -111,14 +152,30 @@ export default function RoomFormDialog({ open, room, onClose, onSaved }: Props) 
           </Stack>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={onClose} disabled={saving}>
+          <Button onClick={onClose} disabled={saving}
+           sx={{
+                backgroundColor: "#ffff",
+                color: "#c33535",
+                "&:hover": {
+                  backgroundColor: "#ffffff",
+                },
+              }}  >
             Cancel
           </Button>
-          <Button type="submit" variant="contained" disabled={saving}>
-            {saving ? 'Saving…' : 'Save'}
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={saving}
+            sx={{
+              backgroundColor: "#c33535",
+              color: "#ffffff",
+              "&:hover": { backgroundColor: "#a82d2d" },
+            }}
+          >
+            {saving ? "Saving…" : "Save"}
           </Button>
         </DialogActions>
       </Stack>
     </Dialog>
-  )
+  );
 }

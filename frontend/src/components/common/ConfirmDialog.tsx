@@ -33,7 +33,14 @@ export default function ConfirmDialog({
         <DialogContentText>{message}</DialogContentText>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onClose} disabled={loading}>
+        <Button onClick={onClose} disabled={loading}
+        sx={{
+                backgroundColor: "#ffff",
+                color: "#c33535",
+                "&:hover": {
+                  backgroundColor: "#ffffff",
+                },
+              }} >
           Cancel
         </Button>
         <Button

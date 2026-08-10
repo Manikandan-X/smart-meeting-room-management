@@ -91,6 +91,31 @@ export default function ResourceFormDialog({ open, resource, onClose, onSaved }:
                 <Switch
                   checked={form.is_available}
                   onChange={(e) => setForm({ ...form, is_available: e.target.checked })}
+                   sx={{
+                    // ON state
+                    "& .MuiSwitch-switchBase.Mui-checked": {
+                      color: "#c33535",
+                    },
+
+                    "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                      backgroundColor: "#c33535",
+                      opacity: 1,
+                    },
+
+                    // OFF state
+                    "& .MuiSwitch-track": {
+                      backgroundColor: "#999999",
+                    },
+
+                    "& .MuiSwitch-thumb": {
+                      backgroundColor: "#ffffff",
+                    },
+
+                    // ON hover
+                    "& .MuiSwitch-switchBase.Mui-checked:hover": {
+                      backgroundColor: "rgba(195, 53, 53, 0.08)",
+                    },
+                  }}
                 />
               }
               label="Available"
@@ -98,8 +123,22 @@ export default function ResourceFormDialog({ open, resource, onClose, onSaved }:
           </Stack>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={onClose} disabled={saving}>Cancel</Button>
-          <Button type="submit" variant="contained" disabled={saving}>
+          <Button onClick={onClose} disabled={saving}
+           sx={{
+                backgroundColor: "#ffff",
+                color: "#c33535",
+                "&:hover": {
+                  backgroundColor: "#ffffff",
+                },
+              }}  >Cancel</Button>
+          <Button type="submit" variant="contained" disabled={saving} 
+          sx={{
+                backgroundColor: "#c33535",
+                color: "#ffffff",
+                "&:hover": {
+                  backgroundColor: "#a82d2d",
+                },
+              }}>
             {saving ? 'Saving…' : 'Save'}
           </Button>
         </DialogActions>

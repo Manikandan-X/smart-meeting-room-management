@@ -47,7 +47,14 @@ export default function EmployeeDashboardPage() {
         title={`Welcome back, ${user?.first_name ?? ''}`}
         subtitle="Here's what's happening with your meeting rooms today."
         actions={
-          <Button variant="contained" onClick={() => navigate('/bookings')}>
+          <Button variant="contained" onClick={() => navigate('/bookings')}
+          sx={{
+                backgroundColor: "#c33535",
+                color: "#ffffff",
+                "&:hover": {
+                  backgroundColor: "#a82d2d",
+                },
+              }}  >
             + New Booking
           </Button>
         }

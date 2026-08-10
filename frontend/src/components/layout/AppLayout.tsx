@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { useState } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 import {
   Box,
   Drawer,
@@ -18,145 +18,183 @@ import {
   Chip,
   useMediaQuery,
   useTheme,
-} from '@mui/material'
-import MenuIcon from '@mui/icons-material/Menu'
-import DashboardIcon from '@mui/icons-material/DashboardOutlined'
-import MeetingRoomIcon from '@mui/icons-material/MeetingRoomOutlined'
-import EventIcon from '@mui/icons-material/EventAvailableOutlined'
-import InventoryIcon from '@mui/icons-material/InventoryOutlined'
-import LinkIcon from '@mui/icons-material/LinkOutlined'
-import ApartmentIcon from '@mui/icons-material/ApartmentOutlined'
-import PeopleIcon from '@mui/icons-material/PeopleOutlined'
-import BadgeIcon from '@mui/icons-material/BadgeOutlined'
-import AssignmentIcon from '@mui/icons-material/AssignmentOutlined'
-import SummarizeIcon from '@mui/icons-material/SummarizeOutlined'
-import LogoutIcon from '@mui/icons-material/LogoutOutlined'
-import { useAuth } from '@/context/AuthContext'
-import NotificationBell from '@/components/layout/NotificationBell'
-import NavLinkItem from '@/components/layout/NavLinkItem'
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import DashboardIcon from "@mui/icons-material/DashboardOutlined";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoomOutlined";
+import EventIcon from "@mui/icons-material/EventAvailableOutlined";
+import InventoryIcon from "@mui/icons-material/InventoryOutlined";
+import LinkIcon from "@mui/icons-material/LinkOutlined";
+import ApartmentIcon from "@mui/icons-material/ApartmentOutlined";
+import PeopleIcon from "@mui/icons-material/PeopleOutlined";
+import BadgeIcon from "@mui/icons-material/BadgeOutlined";
+import AssignmentIcon from "@mui/icons-material/AssignmentOutlined";
+import SummarizeIcon from "@mui/icons-material/SummarizeOutlined";
+import LogoutIcon from "@mui/icons-material/LogoutOutlined";
+import { useAuth } from "@/context/AuthContext";
+import NotificationBell from "@/components/layout/NotificationBell";
+import NavLinkItem from "@/components/layout/NavLinkItem";
 
-const DRAWER_WIDTH = 260
+const DRAWER_WIDTH = 260;
 
 interface NavItem {
-  label: string
-  path: string
-  icon: React.ReactNode
-  adminOnly?: boolean
+  label: string;
+  path: string;
+  icon: React.ReactNode;
+  adminOnly?: boolean;
 }
 
 const navItems: NavItem[] = [
   {
-    label: 'Dashboard',
-    path: '/',
+    label: "Dashboard",
+    path: "/",
     icon: <DashboardIcon />,
   },
   {
-    label: 'Bookings',
-    path: '/bookings',
+    label: "Bookings",
+    path: "/bookings",
     icon: <EventIcon />,
   },
   {
-    label: 'Meeting Rooms',
-    path: '/rooms',
+    label: "Meeting Rooms",
+    path: "/rooms",
     icon: <MeetingRoomIcon />,
   },
   {
-    label: 'Resources',
-    path: '/resources',
+    label: "Resources",
+    path: "/resources",
     icon: <InventoryIcon />,
     adminOnly: true,
   },
   {
-    label: 'Room Resources',
-    path: '/room-resources',
+    label: "Room Resources",
+    path: "/room-resources",
     icon: <LinkIcon />,
     adminOnly: true,
   },
   {
-    label: 'Departments',
-    path: '/departments',
+    label: "Departments",
+    path: "/departments",
     icon: <ApartmentIcon />,
     adminOnly: true,
   },
   {
-    label: 'Users',
-    path: '/users',
+    label: "Users",
+    path: "/users",
     icon: <PeopleIcon />,
     adminOnly: true,
   },
   {
-    label: 'Roles',
-    path: '/roles',
+    label: "Roles",
+    path: "/roles",
     icon: <BadgeIcon />,
     adminOnly: true,
   },
   {
-    label: 'Reports',
-    path: '/reports',
+    label: "Reports",
+    path: "/reports",
     icon: <SummarizeIcon />,
     adminOnly: true,
   },
   {
-    label: 'Audit Logs',
-    path: '/audit-logs',
+    label: "Audit Logs",
+    path: "/audit-logs",
     icon: <AssignmentIcon />,
     adminOnly: true,
   },
-]
+];
 
 export default function AppLayout() {
-  const { user, isAdmin, logout } = useAuth()
-  const navigate = useNavigate()
-  const theme = useTheme()
-  const isDesktop = useMediaQuery(
-    theme.breakpoints.up('md'),
-  )
+  const { user, isAdmin, logout } = useAuth();
+  const navigate = useNavigate();
+  const theme = useTheme();
 
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const [anchorEl, setAnchorEl] =
-    useState<null | HTMLElement>(null)
+  const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
 
-  const visibleItems = navItems.filter(
-    (item) => !item.adminOnly || isAdmin,
-  )
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const visibleItems = navItems.filter((item) => !item.adminOnly || isAdmin);
 
   const handleLogout = async () => {
-    setAnchorEl(null)
-    await logout()
-    navigate('/login', { replace: true })
-  }
+    setAnchorEl(null);
+    await logout();
+    navigate("/login", { replace: true });
+  };
 
   const drawerContent = (
     <Box
       sx={{
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
-      <Toolbar sx={{ px: 2.5, py: 2 }}>
+      {/* Logo / Header */}
+      <Toolbar
+        sx={{
+          px: 2.5,
+          py: 2,
+          alignItems: "center",
+        }}
+      >
         <MeetingRoomIcon
-          color="primary"
-          sx={{ mr: 1.2, fontSize: 28 }}
+          sx={{
+            mr: 1.2,
+            fontSize: 28,
+            color: "#c33535",
+          }}
         />
+
         <Box>
           <Typography
-            variant="subtitle1"
-            fontWeight={700}
-            lineHeight={1.1}
+            variant="h6"
+            sx={{
+              fontWeight: 700,
+              lineHeight: 1.2,
+            }}
           >
             MeetSpace
           </Typography>
-          <Typography
-            variant="caption"
-            color="text.secondary"
-          >
+
+          <Typography variant="caption" color="text.secondary">
             Room & Resource Manager
           </Typography>
         </Box>
       </Toolbar>
+
       <Divider />
-      <List sx={{ px: 1.5, py: 1.5, flexGrow: 1 }}>
+
+      {/* Navigation */}
+      <List
+        sx={{
+          px: 1.5,
+          py: 1.5,
+          flexGrow: 1,
+
+          // Selected drawer item
+          "& .active": {
+            backgroundColor: "#c33535",
+            color: "#ffffff",
+          },
+
+          // Selected item hover
+          "& .active:hover": {
+            backgroundColor: "#c33535",
+          },
+
+          // Selected item icon
+          "& .active .MuiListItemIcon-root": {
+            color: "#ffffff",
+          },
+
+          // Normal hover
+          "& .MuiListItemButton-root:hover": {
+            backgroundColor: "rgba(195, 53, 53, 0.08)",
+          },
+        }}
+      >
         {visibleItems.map((item) => (
           <NavLinkItem
             key={item.path}
@@ -167,21 +205,32 @@ export default function AppLayout() {
           />
         ))}
       </List>
-      <Divider />
+
+      {/* Access Type */}
       <Box sx={{ p: 2 }}>
         <Chip
-          label={isAdmin ? 'Admin Access' : 'Employee Access'}
-          color={isAdmin ? 'primary' : 'default'}
+          label={isAdmin ? "Admin Access" : "Employee Access"}
           size="small"
           variant="outlined"
-          sx={{ width: '100%' }}
+          sx={{
+            width: "100%",
+            color: isAdmin ? "#2c3e50" : "#222222",
+            borderColor: isAdmin ? "#2c3e50" : "#222222" ,
+            fontWeight:'700'
+          }}
         />
       </Box>
     </Box>
-  )
+  );
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+    <Box
+      sx={{
+        display: "flex",
+        minHeight: "100vh",
+      }}
+    >
+      {/* Top App Bar */}
       <AppBar
         position="fixed"
         color="inherit"
@@ -189,62 +238,61 @@ export default function AppLayout() {
           width: {
             md: `calc(100% - ${DRAWER_WIDTH}px)`,
           },
-          ml: { md: `${DRAWER_WIDTH}px` },
-          bgcolor: 'background.paper',
+          ml: {
+            md: `${DRAWER_WIDTH}px`,
+          },
+          bgcolor: "background.paper",
         }}
       >
         <Toolbar
           sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
+            display: "flex",
+            justifyContent: "space-between",
           }}
         >
+          {/* Left side */}
           <Box
             sx={{
-              display: 'flex',
-              alignItems: 'center',
+              display: "flex",
+              alignItems: "center",
               gap: 1,
             }}
           >
             {!isDesktop && (
-              <IconButton
-                edge="start"
-                onClick={() =>
-                  setMobileOpen(true)
-                }
-              >
+              <IconButton edge="start" onClick={() => setMobileOpen(true)}>
                 <MenuIcon />
               </IconButton>
             )}
+
             <Typography
               variant="h6"
-              sx={{ fontWeight: 700 }}
+              sx={{
+                fontWeight: 700,
+              }}
             >
-              {isAdmin
-                ? 'Admin Dashboard'
-                : 'My Workspace'}
+              {isAdmin ? "Admin Dashboard" : "My Workspace"}
             </Typography>
           </Box>
 
+          {/* Right side */}
           <Box
             sx={{
-              display: 'flex',
-              alignItems: 'center',
+              display: "flex",
+              alignItems: "center",
               gap: 1,
             }}
           >
             <NotificationBell />
+
             <IconButton
-              onClick={(e) =>
-                setAnchorEl(e.currentTarget)
-              }
+              onClick={(e) => setAnchorEl(e.currentTarget)}
               sx={{ ml: 0.5 }}
             >
               <Avatar
                 sx={{
                   width: 34,
                   height: 34,
-                  bgcolor: 'primary.main',
+                  bgcolor: "#c33535",
                   fontSize: 14,
                 }}
               >
@@ -252,44 +300,48 @@ export default function AppLayout() {
                 {user?.last_name?.[0]}
               </Avatar>
             </IconButton>
+
+            {/* User Menu */}
             <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
               onClose={() => setAnchorEl(null)}
               anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right',
+                vertical: "bottom",
+                horizontal: "right",
               }}
               transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+                vertical: "top",
+                horizontal: "right",
               }}
             >
-              <Box sx={{ px: 2, py: 1, minWidth: 200 }}>
-                <Typography
-                  variant="subtitle2"
-                  fontWeight={700}
-                >
+              <Box
+                sx={{
+                  px: 2,
+                  py: 1,
+                  minWidth: 200,
+                }}
+              >
+                <Typography variant="subtitle2" fontWeight={700}>
                   {user?.first_name} {user?.last_name}
                 </Typography>
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                >
+
+                <Typography variant="caption" color="text.secondary">
                   {user?.email}
                 </Typography>
+
                 <br />
-                <Chip
-                  label={user?.role_name}
-                  size="small"
-                  sx={{ mt: 0.5 }}
-                />
+
+                <Chip label={user?.role_name} size="small" sx={{ mt: 0.5 }} />
               </Box>
+
               <Divider />
+
               <MenuItem onClick={handleLogout}>
                 <ListItemIcon>
                   <LogoutIcon fontSize="small" />
                 </ListItemIcon>
+
                 <ListItemText>Logout</ListItemText>
               </MenuItem>
             </Menu>
@@ -297,35 +349,78 @@ export default function AppLayout() {
         </Toolbar>
       </AppBar>
 
+      {/* Drawer */}
       <Box
         component="nav"
         sx={{
-          width: { md: DRAWER_WIDTH },
-          flexShrink: { md: 0 },
+          width: {
+            md: DRAWER_WIDTH,
+          },
+          flexShrink: {
+            md: 0,
+          },
         }}
       >
+        {/* Mobile Drawer */}
         <Drawer
           variant="temporary"
           open={mobileOpen}
           onClose={() => setMobileOpen(false)}
-          ModalProps={{ keepMounted: true }}
+          ModalProps={{
+            keepMounted: true,
+          }}
           sx={{
-            display: { xs: 'block', md: 'none' },
-            '& .MuiDrawer-paper': {
+            display: {
+              xs: "block",
+              md: "none",
+            },
+
+            "& .MuiDrawer-paper": {
               width: DRAWER_WIDTH,
+
+              "& .active": {
+                backgroundColor: "#c33535",
+                color: "#ffffff",
+              },
+
+              "& .active:hover": {
+                backgroundColor: "#c33535",
+              },
+
+              "& .active .MuiListItemIcon-root": {
+                color: "#ffffff",
+              },
             },
           }}
         >
           {drawerContent}
         </Drawer>
+
+        {/* Desktop Drawer */}
         <Drawer
           variant="permanent"
           sx={{
-            display: { xs: 'none', md: 'block' },
-            '& .MuiDrawer-paper': {
+            display: {
+              xs: "none",
+              md: "block",
+            },
+
+            "& .MuiDrawer-paper": {
               width: DRAWER_WIDTH,
-              borderRight:
-                '1px solid rgba(0,0,0,0.06)',
+              borderRight: "1px solid rgba(0,0,0,0.06)",
+
+              "& .active": {
+                backgroundColor: "#c33535",
+                color: "#ffffff",
+              },
+
+              "& .active:hover": {
+                backgroundColor: "#c33535",
+              },
+
+              "& .active .MuiListItemIcon-root": {
+                color: "#ffffff",
+              },
             },
           }}
           open
@@ -334,6 +429,7 @@ export default function AppLayout() {
         </Drawer>
       </Box>
 
+      {/* Main Content */}
       <Box
         component="main"
         sx={{
@@ -341,15 +437,23 @@ export default function AppLayout() {
           width: {
             md: `calc(100% - ${DRAWER_WIDTH}px)`,
           },
-          bgcolor: 'background.default',
-          minHeight: '100vh',
+          bgcolor: "background.default",
+          minHeight: "100vh",
         }}
       >
         <Toolbar />
-        <Box sx={{ p: { xs: 2, md: 3 } }}>
+
+        <Box
+          sx={{
+            p: {
+              xs: 2,
+              md: 3,
+            },
+          }}
+        >
           <Outlet />
         </Box>
       </Box>
     </Box>
-  )
+  );
 }

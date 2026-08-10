@@ -72,6 +72,13 @@ export default function RolesPage() {
               setEditing(null)
               setFormOpen(true)
             }}
+            sx={{
+                backgroundColor: "#c33535",
+                color: "#ffffff",
+                "&:hover": {
+                  backgroundColor: "#a82d2d",
+                },
+              }}  
           >
             New Role
           </Button>

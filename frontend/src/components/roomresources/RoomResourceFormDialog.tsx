@@ -99,8 +99,22 @@ export default function RoomResourceFormDialog({
           </Stack>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={onClose} disabled={saving}>Cancel</Button>
-          <Button type="submit" variant="contained" disabled={saving}>
+          <Button onClick={onClose} disabled={saving}
+          sx={{
+                backgroundColor: "#ffff",
+                color: "#c33535",
+                "&:hover": {
+                  backgroundColor: "#ffffff",
+                },
+              }} >Cancel</Button>
+          <Button type="submit" variant="contained" disabled={saving} 
+          sx={{
+                backgroundColor: "#c33535",
+                color: "#ffffff",
+                "&:hover": {
+                  backgroundColor: "#a82d2d",
+                },
+              }}  >
             {saving ? 'Saving…' : 'Save'}
           </Button>
         </DialogActions>

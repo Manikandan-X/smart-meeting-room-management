@@ -1,0 +1,82 @@
+import { useEffect, useState } from 'react'
+import {
+  Dialog, DialogTitle, DialogContent, DialogActions,
+  TextField, Button, Stack, Alert,
+} from '@mui/material'
+import type { Role } from '@/types/models'
+import { rolesApi } from '@/api/roles'
+import { getApiErrorMessage } from '@/api/client'
+
+interface Props {
+  open: boolean
+  role: Role | null
+  onClose: () => void
+  onSaved: () => void
+}
+
+export default function RoleFormDialog({ open, role, onClose, onSaved }: Props) {
+  const [form, setForm] = useState({ name: '', description: '' })
+  const [error, setError] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    if (role) {
+      setForm({ name: role.name, description: role.description ?? '' })
+    } else {
+      setForm({ name: '', description: '' })
+    }
+    setError(null)
+  }, [role, open])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSaving(true)
+    setError(null)
+    try {
+      const payload = { name: form.name, description: form.description || null }
+      if (role) {
+        await rolesApi.update(role.id, payload)
+      } else {
+        await rolesApi.create(payload)
+      }
+      onSaved()
+    } catch (err) {
+      setError(getApiErrorMessage(err, 'Could not save role.'))
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+      <DialogTitle>{role ? 'Edit Role' : 'New Role'}</DialogTitle>
+      <Stack component="form" onSubmit={handleSubmit}>
+        <DialogContent>
+          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+          <Stack spacing={2}>
+            <TextField
+              label="Role name"
+              required
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              autoFocus
+            />
+            <TextField
+              label="Description"
+              multiline
+              minRows={2}
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+            />
+          </Stack>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={onClose} disabled={saving}>Cancel</Button>
+          <Button type="submit" variant="contained" disabled={saving}>
+            {saving ? 'Saving…' : 'Save'}
+          </Button>
+        </DialogActions>
+      </Stack>
+    </Dialog>
+  )
+}

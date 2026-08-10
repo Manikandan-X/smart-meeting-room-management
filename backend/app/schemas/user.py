@@ -58,6 +58,11 @@ class UserUpdate(BaseSchema):
 
     department_id: int | None = None
 
+    role_id: int | None = Field(
+        default=None,
+        description="Assign a different role to this user",
+    )
+
     password: str | None = Field(
         default=None,
         min_length=8,
@@ -67,6 +72,10 @@ class UserUpdate(BaseSchema):
 
 class UserResponse(UserBase):
     id: int
+
+    role_id: int
+    role_name: str
+    department_name: str
 
     created_at: datetime
     updated_at: datetime

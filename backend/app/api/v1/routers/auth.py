@@ -14,6 +14,7 @@ from app.schemas.auth import (
     ForgotPasswordRequest,
     ResetPasswordRequest,
     TokenResponse,
+    MeResponse,
 )
 from app.schemas.user import (
     UserCreate,
@@ -60,6 +61,25 @@ def login(
     return service.login(
         email=form_data.username,
         password=form_data.password,
+    )
+    
+@router.get(
+    "/me",
+    response_model=MeResponse,
+    status_code=status.HTTP_200_OK,
+)
+def get_me(
+    current_user: User = Depends(get_current_user),
+):
+    return MeResponse(
+        id=current_user.id,
+        first_name=current_user.first_name,
+        last_name=current_user.last_name,
+        email=current_user.email,
+        role_id=current_user.role.id,
+        role_name=current_user.role.name,
+        department_id=current_user.department.id,
+        department_name=current_user.department.name,
     )
 
 @router.patch(

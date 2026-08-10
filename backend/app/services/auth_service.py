@@ -27,7 +27,7 @@ from app.repositories.password_reset_token_repository import (
     PasswordResetTokenRepository,
 )
 
-from app.schemas.auth import TokenResponse, ForgotPasswordRequest, ResetPasswordRequest
+from app.schemas.auth import TokenResponse, MeResponse, ForgotPasswordRequest, ResetPasswordRequest
 from app.schemas.user import UserCreate
 from app.utils.audit_logger import log_audit
 from app.services.email_service import EmailService
@@ -156,6 +156,22 @@ class AuthService:
             access_token=access_token,
             token_type="bearer",
         )
+        
+    def get_me(
+            self,
+            current_user: User,
+        ) -> MeResponse:
+    
+            return MeResponse(
+                id=current_user.id,
+                first_name=current_user.first_name,
+                last_name=current_user.last_name,
+                email=current_user.email,
+                role_id=current_user.role.id,
+                role_name=current_user.role.name,
+                department_id=current_user.department.id,
+                department_name=current_user.department.name,
+            )
 
     def logout(
         self,

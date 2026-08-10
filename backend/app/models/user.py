@@ -94,6 +94,14 @@ class User(Base, TimestampMixin):
         back_populates="user",
         cascade="all, delete-orphan",
     )
+    
+    @property
+    def role_name(self) -> str:
+        return self.role.name
+
+    @property
+    def department_name(self) -> str:
+        return self.department.name
 
     def __repr__(self) -> str:
         return (

@@ -4,6 +4,8 @@ import RequireAdmin from '@/guards/RequireAdmin'
 import AppLayout from '@/components/layout/AppLayout'
 import LoginPage from '@/pages/auth/LoginPage'
 import RegisterPage from '@/pages/auth/RegisterPage'
+import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage'
+import ResetPasswordPage from '@/pages/auth/ResetPasswordPage'
 import DashboardPage from '@/pages/dashboard/DashboardPage'
 import BookingsPage from '@/pages/bookings/BookingsPage'
 import RoomsPage from '@/pages/rooms/RoomsPage'
@@ -25,6 +27,14 @@ export const router = createBrowserRouter([
   {
     path: '/register',
     element: <RegisterPage />,
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: '/reset-password',
+    element: <ResetPasswordPage />,
   },
   {
     element: <RequireAuth />,

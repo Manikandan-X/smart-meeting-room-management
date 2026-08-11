@@ -47,14 +47,22 @@ export default function ReportsPage() {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const [history, roomList] = await Promise.all([
+      const [historyResult, roomResult] = await Promise.allSettled([
         reportsApi.bookingHistory(filterParams),
         meetingRoomsApi.list({ limit: 100 }),
       ])
-      setRows(history)
-      setRooms(roomList)
-    } catch (err) {
-      enqueueSnackbar(getApiErrorMessage(err), { variant: 'error' })
+
+      if (historyResult.status === 'fulfilled') {
+        setRows(historyResult.value)
+      } else {
+        enqueueSnackbar(getApiErrorMessage(historyResult.reason), { variant: 'error' })
+      }
+
+      if (roomResult.status === 'fulfilled') {
+        setRooms(roomResult.value)
+      } else {
+        enqueueSnackbar(getApiErrorMessage(roomResult.reason), { variant: 'error' })
+      }
     } finally {
       setLoading(false)
     }

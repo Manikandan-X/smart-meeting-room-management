@@ -30,7 +30,7 @@ export default function RoomResourcesPage() {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const [rr, roomList, resourceList] = await Promise.all([
+      const [rrResult, roomResult, resourceResult] = await Promise.allSettled([
         roomResourcesApi.list({
           meeting_room_id: roomFilter === 'all' ? undefined : Number(roomFilter),
           limit: 100,
@@ -38,11 +38,24 @@ export default function RoomResourcesPage() {
         meetingRoomsApi.list({ limit: 100 }),
         resourcesApi.list({ limit: 100 }),
       ])
-      setRows(rr)
-      setRooms(roomList)
-      setResources(resourceList)
-    } catch (err) {
-      enqueueSnackbar(getApiErrorMessage(err), { variant: 'error' })
+
+      if (rrResult.status === 'fulfilled') {
+        setRows(rrResult.value)
+      } else {
+        enqueueSnackbar(getApiErrorMessage(rrResult.reason), { variant: 'error' })
+      }
+
+      if (roomResult.status === 'fulfilled') {
+        setRooms(roomResult.value)
+      } else {
+        enqueueSnackbar(getApiErrorMessage(roomResult.reason), { variant: 'error' })
+      }
+
+      if (resourceResult.status === 'fulfilled') {
+        setResources(resourceResult.value)
+      } else {
+        enqueueSnackbar(getApiErrorMessage(resourceResult.reason), { variant: 'error' })
+      }
     } finally {
       setLoading(false)
     }

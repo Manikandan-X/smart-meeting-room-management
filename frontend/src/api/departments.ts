@@ -22,6 +22,17 @@ export const departmentsApi = {
     return data
   },
 
+  /**
+   * Unauthenticated department list, used only by the
+   * registration form (a new user has no token yet).
+   */
+  listPublic: async (): Promise<Department[]> => {
+    const { data } = await apiClient.get<Department[]>(
+      '/departments/public/list',
+    )
+    return data
+  },
+
   get: async (id: number): Promise<Department> => {
     const { data } = await apiClient.get<Department>(
       `/departments/${id}`,

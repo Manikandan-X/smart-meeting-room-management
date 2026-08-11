@@ -133,34 +133,6 @@ class UserService:
             )
 
 
-        if "role_id" in update_data:
-
-            role = (
-                self.role_repository.get_role_by_id(
-                    update_data["role_id"]
-                )
-            )
-
-            if not role:
-                raise NotFoundException(
-                    "Role"
-                )
-
-
-        if "department_id" in update_data:
-
-            department = (
-                self.department_repository.get_department_by_id(
-                    update_data["department_id"]
-                )
-            )
-
-            if not department:
-                raise NotFoundException(
-                    "Department"
-                )
-
-
         user = self.user_repository.update_user(
             user,
             update_data,

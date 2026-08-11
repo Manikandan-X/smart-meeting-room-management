@@ -25,7 +25,7 @@ export default function AuditLogsPage() {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const data = await auditLogsApi.list({ limit: 200 })
+      const data = await auditLogsApi.list({ limit: 100 })
       setRows(data)
     } catch (err) {
       enqueueSnackbar(getApiErrorMessage(err), { variant: 'error' })

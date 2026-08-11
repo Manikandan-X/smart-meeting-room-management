@@ -56,6 +56,28 @@ def get_department(
 
 
 @router.get(
+    "/public/list",
+    response_model=list[DepartmentResponse],
+)
+def get_departments_public(
+    db: Session = Depends(get_db),
+):
+    """
+    Unauthenticated department list used only by the
+    registration form, so a new user can pick a
+    department before they have an account.
+    """
+
+    service = DepartmentService(db)
+
+    return service.get_departments(
+        search=None,
+        skip=0,
+        limit=100,
+    )
+
+
+@router.get(
     "/",
     response_model=list[DepartmentResponse],
 )

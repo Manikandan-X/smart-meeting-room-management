@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useLocation, Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate, useSearchParams } from "react-router-dom";
 
 import {
   Box,
@@ -17,32 +17,42 @@ import MeetingRoomIcon from "@mui/icons-material/MeetingRoomOutlined";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
-import { useAuth } from "@/context/AuthContext";
+import { authApi } from "@/api/auth";
 import { getApiErrorMessage } from "@/api/client";
 
-export default function LoginPage() {
-  const { login } = useAuth();
+export default function ResetPasswordPage() {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const location = useLocation();
+  const token = searchParams.get("token") ?? "";
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const from = (location.state as { from?: Location })?.from?.pathname ?? "/";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    setLoading(true);
 
+    if (!token) {
+      setError("This reset link is missing or invalid. Please request a new one.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    setLoading(true);
     try {
-      await login(email, password);
-      navigate(from, { replace: true });
+      await authApi.resetPassword({ token, new_password: newPassword });
+      setSuccess(true);
+      setTimeout(() => navigate("/login"), 1500);
     } catch (err) {
-      setError(getApiErrorMessage(err, "Invalid email or password."));
+      setError(getApiErrorMessage(err, "Could not reset your password."));
     } finally {
       setLoading(false);
     }
@@ -104,8 +114,15 @@ export default function LoginPage() {
             color: "#ffffff",
           }}
         >
-          Sign in to manage meeting rooms and resources.
+          Choose a new password for your account.
         </Typography>
+
+        {!token && (
+          <Alert severity="warning" sx={{ mb: 2 }}>
+            No reset token found in this link. Please use the link from your email, or
+            request a new one.
+          </Alert>
+        )}
 
         {error && (
           <Alert severity="error" sx={{ mb: 2 }}>
@@ -113,54 +130,22 @@ export default function LoginPage() {
           </Alert>
         )}
 
+        {success && (
+          <Alert severity="success" sx={{ mb: 2 }}>
+            Password reset successfully. Redirecting to sign in…
+          </Alert>
+        )}
+
         <Box component="form" onSubmit={handleSubmit}>
-          {/* Email */}
           <TextField
-            placeholder="Email"
-            type="email"
-            fullWidth
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            sx={{
-              mb: 2,
-              backgroundColor: "#ffffff",
-
-              "& .MuiInputBase-input": {
-                color: "#000000",
-              },
-
-              "& .MuiInputBase-input::placeholder": {
-                color: "#333333",
-                opacity: 1,
-              },
-
-              "& .MuiOutlinedInput-root": {
-                "& fieldset": {
-                  borderColor: "#dddddd",
-                },
-
-                "&:hover fieldset": {
-                  borderColor: "#c33535",
-                },
-
-                "&.Mui-focused fieldset": {
-                  borderColor: "#c33535",
-                },
-              },
-            }}
-            autoFocus
-          />
-
-          <TextField
-            placeholder="Password"
+            placeholder="New password"
             type={showPassword ? "text" : "password"}
             fullWidth
             required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
             sx={{
-              mb: 3,
+              mb: 2,
               backgroundColor: "#ffffff",
 
               "& .MuiInputBase-input": {
@@ -192,34 +177,52 @@ export default function LoginPage() {
                   <IconButton
                     onClick={() => setShowPassword((s) => !s)}
                     edge="end"
-                    sx={{
-                      color: "#274528",
-                    }}
+                    sx={{ color: "#274528" }}
                   >
                     {showPassword ? <VisibilityOff /> : <Visibility />}
                   </IconButton>
                 </InputAdornment>
               ),
             }}
+            autoFocus
           />
 
-          {/* Forgot Password Link */}
-          <Box sx={{ textAlign: "right", mb: 3, mt: -1.5 }}>
-            <Link
-              component={RouterLink}
-              to="/forgot-password"
-              sx={{
-                color: "#ffffff",
-                fontSize: 13,
-                fontWeight: 600,
-                textDecoration: "underline",
-              }}
-            >
-              Forgot password?
-            </Link>
-          </Box>
+          <TextField
+            placeholder="Confirm new password"
+            type={showPassword ? "text" : "password"}
+            fullWidth
+            required
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            sx={{
+              mb: 3,
+              backgroundColor: "#ffffff",
 
-          {/* Sign In Button */}
+              "& .MuiInputBase-input": {
+                color: "#000000",
+              },
+
+              "& .MuiInputBase-input::placeholder": {
+                color: "#333333",
+                opacity: 1,
+              },
+
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "#dddddd",
+                },
+
+                "&:hover fieldset": {
+                  borderColor: "#c33535",
+                },
+
+                "&.Mui-focused fieldset": {
+                  borderColor: "#c33535",
+                },
+              },
+            }}
+          />
+
           <Button
             type="submit"
             variant="contained"
@@ -235,11 +238,10 @@ export default function LoginPage() {
               },
             }}
           >
-            {loading ? "Signing in…" : "Sign In"}
+            {loading ? "Resetting…" : "Reset Password"}
           </Button>
         </Box>
 
-        {/* Register Link */}
         <Typography
           variant="body2"
           align="center"
@@ -248,16 +250,16 @@ export default function LoginPage() {
             color: "#ffffff",
           }}
         >
-          Don't have an account?{" "}
+          Remembered it?{" "}
           <Link
             component={RouterLink}
-            to="/register"
+            to="/login"
             sx={{
               color: "#30d258",
               fontWeight: 600,
             }}
           >
-            Create one
+            Back to Sign In
           </Link>
         </Typography>
       </Paper>

@@ -42,7 +42,7 @@ export default function UsersPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [userList, roleList, deptList] = await Promise.all([
+      const [userResult, roleResult, deptResult] = await Promise.allSettled([
         usersApi.list({
           search: search || undefined,
           role_id: roleFilter === "all" ? undefined : Number(roleFilter),
@@ -52,11 +52,24 @@ export default function UsersPage() {
         rolesApi.list({ limit: 100 }),
         departmentsApi.list({ limit: 100 }),
       ]);
-      setRows(userList);
-      setRoles(roleList);
-      setDepartments(deptList);
-    } catch (err) {
-      enqueueSnackbar(getApiErrorMessage(err), { variant: "error" });
+
+      if (userResult.status === "fulfilled") {
+        setRows(userResult.value);
+      } else {
+        enqueueSnackbar(getApiErrorMessage(userResult.reason), { variant: "error" });
+      }
+
+      if (roleResult.status === "fulfilled") {
+        setRoles(roleResult.value);
+      } else {
+        enqueueSnackbar(getApiErrorMessage(roleResult.reason), { variant: "error" });
+      }
+
+      if (deptResult.status === "fulfilled") {
+        setDepartments(deptResult.value);
+      } else {
+        enqueueSnackbar(getApiErrorMessage(deptResult.reason), { variant: "error" });
+      }
     } finally {
       setLoading(false);
     }

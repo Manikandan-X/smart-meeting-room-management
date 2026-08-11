@@ -35,7 +35,7 @@ export default function RegisterPage() {
 
   useEffect(() => {
     departmentsApi
-      .list({ limit: 100 })
+      .listPublic()
       .then(setDepartments)
       .catch(() => setDepartments([]))
   }, [])

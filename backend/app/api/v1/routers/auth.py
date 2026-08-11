@@ -6,6 +6,7 @@ from fastapi import (
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.core.dependencies import get_current_user
 from app.db.session import get_db
 from app.models.user import User
@@ -62,7 +63,8 @@ def login(
         email=form_data.username,
         password=form_data.password,
     )
-    
+
+
 @router.get(
     "/me",
     response_model=MeResponse,
@@ -81,6 +83,7 @@ def get_me(
         department_id=current_user.department.id,
         department_name=current_user.department.name,
     )
+
 
 @router.patch(
     "/change-password",
@@ -112,7 +115,7 @@ def forgot_password(
     return service.forgot_password(
         email=password_data.email,
         reset_url_base=(
-            "http://localhost:5173/reset-password"
+            f"{settings.frontend_url}/reset-password"
         ),
     )
     

@@ -156,22 +156,22 @@ class AuthService:
             access_token=access_token,
             token_type="bearer",
         )
-        
+
     def get_me(
-            self,
-            current_user: User,
-        ) -> MeResponse:
-    
-            return MeResponse(
-                id=current_user.id,
-                first_name=current_user.first_name,
-                last_name=current_user.last_name,
-                email=current_user.email,
-                role_id=current_user.role.id,
-                role_name=current_user.role.name,
-                department_id=current_user.department.id,
-                department_name=current_user.department.name,
-            )
+        self,
+        current_user: User,
+    ) -> MeResponse:
+
+        return MeResponse(
+            id=current_user.id,
+            first_name=current_user.first_name,
+            last_name=current_user.last_name,
+            email=current_user.email,
+            role_id=current_user.role.id,
+            role_name=current_user.role.name,
+            department_id=current_user.department.id,
+            department_name=current_user.department.name,
+        )
 
     def logout(
         self,
@@ -354,7 +354,20 @@ class AuthService:
             timezone.utc
         )
 
-        if reset_token.expires_at <= current_time:
+        expires_at = reset_token.expires_at
+
+        # MySQL's DATETIME column drops timezone info on
+        # write/read, so values coming back from the DB are
+        # naive even though we stored an aware UTC value.
+        # Normalize before comparing to avoid a TypeError
+        # ("can't compare offset-naive and offset-aware
+        # datetimes").
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(
+                tzinfo=timezone.utc
+            )
+
+        if expires_at <= current_time:
             raise ValidationException(
                 "Invalid or expired password reset token."
             )

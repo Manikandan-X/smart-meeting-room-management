@@ -1,7 +1,10 @@
 import { apiClient } from './client'
 import type {
+  ChangePasswordPayload,
+  ForgotPasswordPayload,
   MeResponse,
   RegisterPayload,
+  ResetPasswordPayload,
   TokenResponse,
   User,
 } from '@/types/models'
@@ -50,5 +53,35 @@ export const authApi = {
 
   logout: async (): Promise<void> => {
     await apiClient.post('/auth/logout')
+  },
+
+  changePassword: async (
+    payload: ChangePasswordPayload,
+  ): Promise<{ message: string }> => {
+    const { data } = await apiClient.patch<{ message: string }>(
+      '/auth/change-password',
+      payload,
+    )
+    return data
+  },
+
+  forgotPassword: async (
+    payload: ForgotPasswordPayload,
+  ): Promise<{ message: string }> => {
+    const { data } = await apiClient.post<{ message: string }>(
+      '/auth/forgot-password',
+      payload,
+    )
+    return data
+  },
+
+  resetPassword: async (
+    payload: ResetPasswordPayload,
+  ): Promise<{ message: string }> => {
+    const { data } = await apiClient.post<{ message: string }>(
+      '/auth/reset-password',
+      payload,
+    )
+    return data
   },
 }

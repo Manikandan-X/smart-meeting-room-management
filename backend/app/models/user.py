@@ -94,7 +94,7 @@ class User(Base, TimestampMixin):
         back_populates="user",
         cascade="all, delete-orphan",
     )
-    
+
     @property
     def role_name(self) -> str:
         return self.role.name

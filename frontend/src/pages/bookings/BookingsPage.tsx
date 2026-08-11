@@ -79,21 +79,34 @@ export default function BookingsPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [b, r, res] = await Promise.all([
+      const [bookingsResult, roomsResult, resourcesResult] = await Promise.allSettled([
         bookingsApi.list({
           search: search || undefined,
           status: statusFilter === "all" ? undefined : statusFilter,
           meeting_room_id: roomFilter === "all" ? undefined : roomFilter,
-          limit: 200,
+          limit: 100,
         }),
         meetingRoomsApi.list({ limit: 100 }),
         resourcesApi.list({ limit: 100 }),
       ]);
-      setBookings(b);
-      setRooms(r);
-      setResources(res);
-    } catch (err) {
-      enqueueSnackbar(getApiErrorMessage(err), { variant: "error" });
+
+      if (bookingsResult.status === "fulfilled") {
+        setBookings(bookingsResult.value);
+      } else {
+        enqueueSnackbar(getApiErrorMessage(bookingsResult.reason), { variant: "error" });
+      }
+
+      if (roomsResult.status === "fulfilled") {
+        setRooms(roomsResult.value);
+      } else {
+        enqueueSnackbar(getApiErrorMessage(roomsResult.reason), { variant: "error" });
+      }
+
+      if (resourcesResult.status === "fulfilled") {
+        setResources(resourcesResult.value);
+      } else {
+        enqueueSnackbar(getApiErrorMessage(resourcesResult.reason), { variant: "error" });
+      }
     } finally {
       setLoading(false);
     }

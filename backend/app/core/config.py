@@ -79,6 +79,14 @@ class Settings(BaseSettings):
     mail_from: str = Field(alias="MAIL_FROM")
     mail_from_name: str = Field(alias="MAIL_FROM_NAME")
 
+    # ==========================================
+    # Frontend
+    # ==========================================
+    frontend_url: str = Field(
+        default="http://localhost:5173",
+        alias="FRONTEND_URL",
+    )
+
 
 @lru_cache
 def get_settings() -> Settings:

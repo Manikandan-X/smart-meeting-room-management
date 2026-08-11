@@ -26,10 +26,22 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
+      const hadToken = Boolean(
+        localStorage.getItem('access_token'),
+      )
+
       localStorage.removeItem('access_token')
 
+      const publicPaths = ['/login', '/register', '/forgot-password', '/reset-password']
+
+      // Only force a redirect when a session actually
+      // expired (a token was present). If the person was
+      // never logged in - e.g. browsing the public
+      // register page - let the request's own error
+      // handling take over instead of hijacking navigation.
       if (
-        window.location.pathname !== '/login'
+        hadToken &&
+        !publicPaths.includes(window.location.pathname)
       ) {
         window.location.href = '/login'
       }

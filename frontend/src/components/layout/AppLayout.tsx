@@ -31,8 +31,10 @@ import BadgeIcon from "@mui/icons-material/BadgeOutlined";
 import AssignmentIcon from "@mui/icons-material/AssignmentOutlined";
 import SummarizeIcon from "@mui/icons-material/SummarizeOutlined";
 import LogoutIcon from "@mui/icons-material/LogoutOutlined";
+import LockResetOutlinedIcon from "@mui/icons-material/LockResetOutlined";
 import { useAuth } from "@/context/AuthContext";
 import NotificationBell from "@/components/layout/NotificationBell";
+import ChangePasswordDialog from "@/components/auth/ChangePasswordDialog";
 import NavLinkItem from "@/components/layout/NavLinkItem";
 
 const DRAWER_WIDTH = 260;
@@ -114,6 +116,7 @@ export default function AppLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 
   const visibleItems = navItems.filter((item) => !item.adminOnly || isAdmin);
 
@@ -337,6 +340,19 @@ export default function AppLayout() {
 
               <Divider />
 
+              <MenuItem
+                onClick={() => {
+                  setAnchorEl(null);
+                  setChangePasswordOpen(true);
+                }}
+              >
+                <ListItemIcon>
+                  <LockResetOutlinedIcon fontSize="small" sx={{ color: "#274528" }} />
+                </ListItemIcon>
+
+                <ListItemText>Change Password</ListItemText>
+              </MenuItem>
+
               <MenuItem onClick={handleLogout}>
                 <ListItemIcon>
                   <LogoutIcon fontSize="small" />
@@ -348,6 +364,11 @@ export default function AppLayout() {
           </Box>
         </Toolbar>
       </AppBar>
+
+      <ChangePasswordDialog
+        open={changePasswordOpen}
+        onClose={() => setChangePasswordOpen(false)}
+      />
 
       {/* Drawer */}
       <Box

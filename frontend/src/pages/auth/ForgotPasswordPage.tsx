@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useLocation, Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 
 import {
   Box,
@@ -8,41 +8,32 @@ import {
   Button,
   Typography,
   Alert,
-  InputAdornment,
-  IconButton,
   Link,
 } from "@mui/material";
 
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoomOutlined";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-import { useAuth } from "@/context/AuthContext";
+import { authApi } from "@/api/auth";
 import { getApiErrorMessage } from "@/api/client";
 
-export default function LoginPage() {
-  const { login } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-
+export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
-  const from = (location.state as { from?: Location })?.from?.pathname ?? "/";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setMessage(null);
     setLoading(true);
 
     try {
-      await login(email, password);
-      navigate(from, { replace: true });
+      const res = await authApi.forgotPassword({ email });
+      setMessage(res.message);
     } catch (err) {
-      setError(getApiErrorMessage(err, "Invalid email or password."));
+      setError(getApiErrorMessage(err, "Could not send reset link."));
     } finally {
       setLoading(false);
     }
@@ -104,7 +95,7 @@ export default function LoginPage() {
             color: "#ffffff",
           }}
         >
-          Sign in to manage meeting rooms and resources.
+          Enter your email and we'll send you a link to reset your password.
         </Typography>
 
         {error && (
@@ -113,8 +104,13 @@ export default function LoginPage() {
           </Alert>
         )}
 
+        {message && (
+          <Alert severity="success" sx={{ mb: 2 }}>
+            {message}
+          </Alert>
+        )}
+
         <Box component="form" onSubmit={handleSubmit}>
-          {/* Email */}
           <TextField
             placeholder="Email"
             type="email"
@@ -123,7 +119,7 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             sx={{
-              mb: 2,
+              mb: 3,
               backgroundColor: "#ffffff",
 
               "& .MuiInputBase-input": {
@@ -152,74 +148,6 @@ export default function LoginPage() {
             autoFocus
           />
 
-          <TextField
-            placeholder="Password"
-            type={showPassword ? "text" : "password"}
-            fullWidth
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            sx={{
-              mb: 3,
-              backgroundColor: "#ffffff",
-
-              "& .MuiInputBase-input": {
-                color: "#000000",
-              },
-
-              "& .MuiInputBase-input::placeholder": {
-                color: "#333333",
-                opacity: 1,
-              },
-
-              "& .MuiOutlinedInput-root": {
-                "& fieldset": {
-                  borderColor: "#dddddd",
-                },
-
-                "&:hover fieldset": {
-                  borderColor: "#c33535",
-                },
-
-                "&.Mui-focused fieldset": {
-                  borderColor: "#c33535",
-                },
-              },
-            }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setShowPassword((s) => !s)}
-                    edge="end"
-                    sx={{
-                      color: "#274528",
-                    }}
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-
-          {/* Forgot Password Link */}
-          <Box sx={{ textAlign: "right", mb: 3, mt: -1.5 }}>
-            <Link
-              component={RouterLink}
-              to="/forgot-password"
-              sx={{
-                color: "#ffffff",
-                fontSize: 13,
-                fontWeight: 600,
-                textDecoration: "underline",
-              }}
-            >
-              Forgot password?
-            </Link>
-          </Box>
-
-          {/* Sign In Button */}
           <Button
             type="submit"
             variant="contained"
@@ -235,11 +163,10 @@ export default function LoginPage() {
               },
             }}
           >
-            {loading ? "Signing in…" : "Sign In"}
+            {loading ? "Sending…" : "Send Reset Link"}
           </Button>
         </Box>
 
-        {/* Register Link */}
         <Typography
           variant="body2"
           align="center"
@@ -248,16 +175,19 @@ export default function LoginPage() {
             color: "#ffffff",
           }}
         >
-          Don't have an account?{" "}
           <Link
             component={RouterLink}
-            to="/register"
+            to="/login"
             sx={{
               color: "#30d258",
               fontWeight: 600,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 0.5,
             }}
           >
-            Create one
+            <ArrowBackIcon sx={{ fontSize: 16 }} />
+            Back to Sign In
           </Link>
         </Typography>
       </Paper>

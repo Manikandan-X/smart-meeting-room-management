@@ -20,7 +20,8 @@ class TokenPayload(BaseSchema):
         ...,
         description="User email stored in JWT subject",
     )
-    
+
+
 class MeResponse(BaseSchema):
     id: int
     first_name: str
@@ -32,7 +33,8 @@ class MeResponse(BaseSchema):
 
     department_id: int
     department_name: str
-    
+
+
 class ChangePasswordRequest(BaseSchema):
     current_password: str = Field(
         min_length=8,
